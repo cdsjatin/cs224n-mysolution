@@ -31,12 +31,32 @@ def softmax(x):
     if len(x.shape) > 1:
         # Matrix
         ### YOUR CODE HERE
-        raise NotImplementedError
+        # for stability
+        x_new = x - np.expand_dims(np.max(x, axis=1),axis=-1)
+        
+        # Compute dot products return NxN matrix
+        ex = np.exp(x_new)
+        
+        # Compute denominator for all rows
+        den = np.sum(ex, axis=1)
+        den = np.expand_dims(den , axis=-1)
+        
+        # Broadcast denominator to all the exp
+        
+        x = ex / den
+        
         ### END YOUR CODE
     else:
         # Vector
         ### YOUR CODE HERE
-        raise NotImplementedError
+        
+        # if shape is 1 then just normalize and return
+        
+        x_new = x - np.max(x)
+        ex = np.exp(x_new)
+        
+        x = ex / np.sum(ex)
+        
         ### END YOUR CODE
 
     assert x.shape == orig_shape
@@ -78,7 +98,7 @@ def test_softmax():
     """
     print "Running your tests..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    pass
     ### END YOUR CODE
 
 
