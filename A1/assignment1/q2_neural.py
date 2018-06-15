@@ -43,21 +43,30 @@ def forward_backward_prop(X, labels, params, dimensions):
     
     h = sigmoid(X.dot(W1) + b1)
     
-    y_hat = sigmoid(h.dot(W2) + b2)
+    ##-E1------- SOFTMAX not sigmoid
+    y_hat = softmax(h.dot(W2) + b2)
     
-    cost = np.sum(-np.log(y_hat[labels==1]))
+    cost = -np.sum(np.log(y_hat) * labels)
     
     ### END YOUR CODE
 
     ### YOUR CODE HERE: backward propagation
     
+    ## -E2------ grad of Cross entropy loss
+    ## after softmax is very simple
+    loss_grad = y_hat - labels
     
-    loss_grad = sigmoid_grad(y_hat)
-    loss_grad[labels == 1] = y_hat[labels == 1] - 1
-    gradW2 = loss_grad
-    gradb2 = np.sum(loss_grad, axis=1)
+    gradW2 = h.T.dot(loss_grad)
+    gradb2 = np.sum(loss_grad, axis=0)
     
-    gradW1 = 
+    ##-- E3 ----- sigmoid_grad takes input sigmoids
+    ## PAY ATTENTION TO THIS STEP
+    h_grad = loss_grad.dot(W2.T)*sigmoid_grad(h)
+    #print(h_grad.shape)
+    
+    gradb1 = np.sum(h_grad, axis = 0)
+    gradW1 = X.T.dot(h_grad)
+    
     ### END YOUR CODE
 
     ### Stack gradients (do not modify)
@@ -97,7 +106,7 @@ def your_sanity_checks():
     """
     print "Running your sanity checks..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    pass
     ### END YOUR CODE
 
 
